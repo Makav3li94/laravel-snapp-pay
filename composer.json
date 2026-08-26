@@ -1,0 +1,71 @@
+{
+  "name": "backendprogramer/snapp-pay",
+  "description": "Installment Payment Gateway for SnappPay in Laravel applications.",
+  "keywords": [
+    "backendprogramer",
+    "laravel",
+    "snapp-pay",
+    "snapp",
+    "payment",
+    "payment-gateway",
+    "installment"
+  ],
+  "homepage": "https://github.com/backendprogramer/snapp-pay",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Ali Ghorbani",
+      "email": "backend.programer.90@gmail.com",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": "^8.1",
+    "ext-curl": "*",
+    "illuminate/contracts": "^11.0|^12.0|^13.0",
+    "spatie/laravel-package-tools": "^1.14.0"
+  },
+  "require-dev": {
+    "laravel/pint": "^1.22",
+    "nunomaduro/collision": "^8.9",
+    "orchestra/testbench": "^9.0|^10.0|^11.0",
+    "pestphp/pest": "^2.0|^3.0|^4.0",
+    "pestphp/pest-plugin-arch": "^2.0|^3.0",
+    "pestphp/pest-plugin-laravel": "^2.0|^3.0|^4.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "BackendProgramer\\SnappPay\\": "src/",
+      "BackendProgramer\\SnappPay\\Database\\Factories\\": "database/factories/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "BackendProgramer\\SnappPay\\Tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "post-autoload-dump": "@php ./vendor/bin/testbench package:discover --ansi",
+    "test": "vendor/bin/pest",
+    "test-coverage": "vendor/bin/pest --coverage",
+    "format": "vendor/bin/pint"
+  },
+  "config": {
+    "sort-packages": true,
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "BackendProgramer\\SnappPay\\SnappPayServiceProvider"
+      ],
+      "aliases": {
+        "SnappPay": "BackendProgramer\\SnappPay\\Facades\\SnappPay"
+      }
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}
