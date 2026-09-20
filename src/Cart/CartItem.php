@@ -52,7 +52,7 @@ class CartItem
     /**
      * SnappPay cartItem constructor.
      *
-     * @param string             $id
+     * @param int             $id
      * @param string          $name
      * @param int             $count
      * @param int             $amount

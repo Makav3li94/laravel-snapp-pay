@@ -49,7 +49,7 @@ class OrderProduct
     /**
      * Driver constructor.
      *
-     * @param string             $id
+     * @param int             $id
      * @param string          $title
      * @param int             $price
      * @param int             $priceWithDiscount
