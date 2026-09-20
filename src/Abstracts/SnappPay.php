@@ -190,7 +190,7 @@ abstract class SnappPay implements SnappPayInterface
 
         $is_json = $this->snappPayIsJson($responseBody);
         // Check the status code, if it's not between 200 and 299 then it's an error.
-        // for "RBA: Access Denied" strings raises array error in json_decode. for this king of errors, 
+        // for "RBA: Access Denied" strings raises array error in json_decode. for this king of errors,
         // it's better to return arrya of error message.
         if (!$is_json) {
             return [
@@ -223,33 +223,68 @@ abstract class SnappPay implements SnappPayInterface
             $url = $this->getApiBaseUrl() . $endpoint;
         }
 
-        if ($token == 'Basic') {
-            $headers = $this->getRequestBasicToken();
-        } else {
-            $headers = $this->getRequestBearerToken();
-        }
-        $request = [
-            'method' => $method,
-        ];
+        $headers = $token === 'Basic' ? $this->getRequestBasicToken() : $this->getRequestBearerToken();
+
+        $request = ['method' => $method];
 
         if ($method == 'GET' && !empty($args) && is_array($args)) {
             $url = $url . '?' . http_build_query($args);
         } else {
-            if ($token === 'Basic') {
-                $request['body'] = http_build_query($args);
-            } else {
-                $request['body'] = json_encode($args);
-            }
+            $request['body'] = $token === 'Basic' ? http_build_query($args) : json_encode($args);
         }
 
-        // Add custom user-agent to request.
         $headers['user-agent'] = 'SnappPay, ' . $this->setting->getClientId();
-
         $request['headers'] = $headers;
+
         $response = $this->curlExecute($url, $request);
-        //file_put_contents(ABSPATH . 'snapppay.log', date('Y-m-d H:i:s') . ' === ' . json_encode(['req' => $request, 'res' => $response, 'url' => $url], true) . PHP_EOL . PHP_EOL, FILE_APPEND);
+
+        // Helper برای decode رشته‌های JSON که دوبار encode شده‌اند
+        $normalizeJson = function ($data) {
+            if (is_string($data)) {
+                $decoded = json_decode($data, true);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    $data = $decoded;
+                }
+            }
+            return $data;
+        };
+
+// decode رشته‌های JSON
+        $body = $normalizeJson($response['body'] ?? $response ?? null);
+
+// تبدیل رشته‌ها داخل آرایه به UTF-8
+        $bodyUtf8 = function ($data) use (&$bodyUtf8) {
+            if (is_array($data)) {
+                foreach ($data as $k => $v) {
+                    $data[$k] = $bodyUtf8($v);
+                }
+                return $data;
+            } elseif (is_string($data)) {
+                return mb_convert_encoding($data, 'UTF-8', 'auto');
+            }
+            return $data;
+        };
+
+        $body = $bodyUtf8($body);
+
+// لاگ نهایی
+        file_put_contents(
+            storage_path('logs/snappay_requests.log'),
+            json_encode([
+                'time' => now()->toDateTimeString(),
+                'endpoint' => $endpoint,
+                'method' => $method,
+                'request' => $args,
+                'response_status' => $response['http_code'] ?? $response['status'] ?? 'unknown',
+                'response_body' => $body
+            ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL . PHP_EOL,
+            FILE_APPEND
+        );
+
+
         return $this->processResponse($response, $request, $url);
     }
+
 
     /**
      * Execute request by curl.
@@ -280,12 +315,15 @@ abstract class SnappPay implements SnappPayInterface
 
         ]);
         $response = curl_exec($ch);
+        $curlInfo = curl_getinfo($ch);
         if (curl_errno($ch)) {
             $error_msg = curl_error($ch);
+            // log error
             curl_close($ch);
-
             return ['curlError' => $error_msg];
         }
+
+        // log success request & response
 
         curl_close($ch);
 

@@ -9,7 +9,7 @@ class OrderProduct
      *
      * @var int id
      */
-    protected int $id;
+    protected string $id;
 
     /**
      * Product title.

@@ -12,7 +12,7 @@ abstract class Order implements OrderInterface
      *
      * @var int id
      */
-    protected int $id;
+    protected string $id;
 
     /**
      * Order price without discount.
