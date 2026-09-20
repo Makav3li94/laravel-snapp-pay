@@ -10,9 +10,9 @@ class CartItem
     /**
      * Cart item id.
      *
-     * @var string id
+     * @var int id
      */
-    protected string $id;
+    protected int $id;
 
     /**
      * Cart item name.
@@ -59,7 +59,7 @@ class CartItem
      * @param ProductCategory $productCategory
      */
     #[Pure]
-    public function __construct(string $id, string $name, int $count, int $amount, ProductCategory $productCategory)
+    public function __construct(int $id, string $name, int $count, int $amount, ProductCategory $productCategory)
     {
         $this->id = $id;
         $this->name = $name;
@@ -72,11 +72,11 @@ class CartItem
     /**
      * Set the cart item id.
      *
-     * @param string $id
+     * @param int $id
      *
      * @return void
      */
-    public function setId(string $id): void
+    public function setId(int $id): void
     {
         $this->id = $id;
     }
@@ -84,9 +84,9 @@ class CartItem
     /**
      * Get the cart item id.
      *
-     * @return string
+     * @return int
      */
-    public function getId(): string
+    public function getId(): int
     {
         return $this->id;
     }

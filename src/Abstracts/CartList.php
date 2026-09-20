@@ -108,7 +108,7 @@ abstract class CartList implements CartListInterface
     /**
      * Add cart item.
      */
-    public function removeCartItem(string $id): bool
+    public function removeCartItem(int $id): bool
     {
         foreach ($this->cartItems as $key => $cartItem) {
             if ($cartItem->getId() == $id) {

@@ -10,9 +10,9 @@ abstract class Order implements OrderInterface
     /**
      * Order Id.
      *
-     * @var string id
+     * @var int id
      */
-    protected string $id;
+    protected int $id;
 
     /**
      * Order price without discount.
@@ -80,7 +80,7 @@ abstract class Order implements OrderInterface
     /**
      * SnappPay Order constructor.
      *
-     * @param string    $id
+     * @param int    $id
      * @param int    $price
      * @param int    $totalPrice
      * @param int    $shippingAmount
@@ -90,7 +90,7 @@ abstract class Order implements OrderInterface
      * @param string $userMobile
      * @param string $paymentToken
      */
-    public function __construct(string $id, int $price, int $totalPrice, int $shippingAmount, int $taxAmount, int $externalSourceAmount, string $orderCurrency, string $userMobile, string $paymentToken = '')
+    public function __construct(int $id, int $price, int $totalPrice, int $shippingAmount, int $taxAmount, int $externalSourceAmount, string $orderCurrency, string $userMobile, string $paymentToken = '')
     {
         $this->orderProducts = [];
         $this->id = $id;
@@ -129,12 +129,12 @@ abstract class Order implements OrderInterface
     /**
      * Remove order products.
      *
-     * @param string  $id
+     * @param int  $id
      * @param bool $updateOrderPrice
      *
      * @return bool
      */
-    public function removeProduct(string $id, bool $updateOrderPrice = false): bool
+    public function removeProduct(int $id, bool $updateOrderPrice = false): bool
     {
         foreach ($this->orderProducts as $key => $product) {
             if ($product->getId() == $id) {
@@ -154,11 +154,11 @@ abstract class Order implements OrderInterface
     /**
      * Retrieve order product by productId.
      *
-     * @param string $id
+     * @param int $id
      *
      * @return OrderProduct|null
      */
-    public function getOrderProduct(string $id): ?OrderProduct
+    public function getOrderProduct(int $id): ?OrderProduct
     {
         foreach ($this->orderProducts as $product) {
             if ($product->getId() == $id) {
@@ -182,11 +182,11 @@ abstract class Order implements OrderInterface
     /**
      * Set order id.
      *
-     * @param string $id
+     * @param int $id
      *
      * @return void
      */
-    public function setId(string $id): void
+    public function setId(int $id): void
     {
         $this->id = $id;
     }
@@ -194,9 +194,9 @@ abstract class Order implements OrderInterface
     /**
      * Retrieve order id.
      *
-     * @return string
+     * @return int
      */
-    public function getId(): string
+    public function getId(): int
     {
         return $this->id;
     }

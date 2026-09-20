@@ -7,14 +7,14 @@ class OrderProduct
     /**
      * Product id.
      *
-     * @var string id
+     * @var int id
      */
-    protected string $id;
+    protected int $id;
 
     /**
      * Product title.
      *
-     * @var string itle
+     * @var string title
      */
     protected string $title;
 
@@ -56,7 +56,7 @@ class OrderProduct
      * @param int             $qty
      * @param ProductCategory $category
      */
-    public function __construct(string $id, string $title, int $price, int $priceWithDiscount, int $qty, ProductCategory $category)
+    public function __construct(int $id, string $title, int $price, int $priceWithDiscount, int $qty, ProductCategory $category)
     {
         $this->id = $id;
         $this->title = $title;
@@ -69,11 +69,11 @@ class OrderProduct
     /**
      * Set the product id.
      *
-     * @param string $id
+     * @param int $id
      *
      * @return void
      */
-    public function setId(string $id): void
+    public function setId(int $id): void
     {
         $this->id = $id;
     }
@@ -81,9 +81,9 @@ class OrderProduct
     /**
      * Retrieve product id.
      *
-     * @return string
+     * @return int
      */
-    public function getId(): string
+    public function getId(): int
     {
         return $this->id;
     }
