@@ -10,9 +10,9 @@ class CartItem
     /**
      * Cart item id.
      *
-     * @var int id
+     * @var string id
      */
-    protected int $id;
+    protected string $id;
 
     /**
      * Cart item name.
@@ -52,14 +52,14 @@ class CartItem
     /**
      * SnappPay cartItem constructor.
      *
-     * @param int             $id
+     * @param string             $id
      * @param string          $name
      * @param int             $count
      * @param int             $amount
      * @param ProductCategory $productCategory
      */
     #[Pure]
-    public function __construct(int $id, string $name, int $count, int $amount, ProductCategory $productCategory)
+    public function __construct(string $id, string $name, int $count, int $amount, ProductCategory $productCategory)
     {
         $this->id = $id;
         $this->name = $name;
@@ -72,11 +72,11 @@ class CartItem
     /**
      * Set the cart item id.
      *
-     * @param int $id
+     * @param string $id
      *
      * @return void
      */
-    public function setId(int $id): void
+    public function setId(string $id): void
     {
         $this->id = $id;
     }
