@@ -14,9 +14,9 @@ abstract class CartList implements CartListInterface
     /**
      * Cart id.
      *
-     * @var int cartId
+     * @var CartList cartId
      */
-    protected int $cartId;
+    protected CartList $cartId;
 
     /**
      * Cart total amount.
