@@ -7,7 +7,7 @@ class OrderProduct
     /**
      * Product id.
      *
-     * @var int id
+     * @var string id
      */
     protected string $id;
 
@@ -49,14 +49,14 @@ class OrderProduct
     /**
      * Driver constructor.
      *
-     * @param int             $id
+     * @param string             $id
      * @param string          $title
      * @param int             $price
      * @param int             $priceWithDiscount
      * @param int             $qty
      * @param ProductCategory $category
      */
-    public function __construct(int $id, string $title, int $price, int $priceWithDiscount, int $qty, ProductCategory $category)
+    public function __construct(string $id, string $title, int $price, int $priceWithDiscount, int $qty, ProductCategory $category)
     {
         $this->id = $id;
         $this->title = $title;
@@ -69,11 +69,11 @@ class OrderProduct
     /**
      * Set the product id.
      *
-     * @param int $id
+     * @param string $id
      *
      * @return void
      */
-    public function setId(int $id): void
+    public function setId(string $id): void
     {
         $this->id = $id;
     }
@@ -81,9 +81,9 @@ class OrderProduct
     /**
      * Retrieve product id.
      *
-     * @return int
+     * @return string
      */
-    public function getId(): int
+    public function getId(): string
     {
         return $this->id;
     }
