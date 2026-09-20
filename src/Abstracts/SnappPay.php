@@ -12,8 +12,8 @@ use JetBrains\PhpStorm\Pure;
 
 abstract class SnappPay implements SnappPayInterface
 {
-    use OrderSettings;
     use EndpointSettings;
+    use OrderSettings;
 
     /**
      * Base Setting.
@@ -38,19 +38,16 @@ abstract class SnappPay implements SnappPayInterface
 
     /**
      * Class constructor.
-     *
-     * @param SnappPaySetting|null  $setting
-     * @param SnappPayEndpoint|null $endPoint
      */
-    public function __construct(SnappPaySetting $setting = null, SnappPayEndpoint $endPoint = null)
+    public function __construct(?SnappPaySetting $setting = null, ?SnappPayEndpoint $endPoint = null)
     {
-        if (!$setting) {
+        if (! $setting) {
             $this->setting = new SnappPaySetting(true);
         } else {
             $this->setting = $setting;
         }
 
-        if (!$endPoint) {
+        if (! $endPoint) {
             $this->endPoint = new SnappPayEndpoint(true);
         } else {
             $this->endPoint = $endPoint;
@@ -59,112 +56,65 @@ abstract class SnappPay implements SnappPayInterface
 
     /**
      * Gets SnappPay API URL base.
-     *
-     * @return string
      */
     #[Pure]
     public function getApiBaseUrl(): string
     {
-        return $this->urlSlashCheck($this->setting->getBaseUrl(), true) . '/';
+        return $this->urlSlashCheck($this->setting->getBaseUrl(), true).'/';
     }
 
     /**
      * Gets SnappPay API request basic token.
-     *
-     * @return array
      */
     abstract public function getRequestBasicToken(): array;
 
     /**
      * Gets SnappPay API request bearer token.
-     *
-     * @return array
      */
     abstract public function getRequestBearerToken(): array;
 
     /**
      * Check Merchant Eligibility.
-     *
-     * @param int    $amount
-     * @param string $currency
-     *
-     * @return array
      */
     abstract public function isMerchantEligible(int $amount, string $currency): array;
 
     /**
      * Get Payment token.
-     *
-     * @param Order  $order
-     * @param string $callBackUrl
-     * @param string $transactionId
-     *
-     * @return array
      */
     abstract public function getPaymentToken(Order $order, string $callBackUrl, string $transactionId): array;
 
     /**
      * Verify order.
-     *
-     * @param string $paymentToken
-     *
-     * @return array
      */
     abstract public function verifyOrder(string $paymentToken): array;
 
     /**
      * Settle order.
-     *
-     * @param string $paymentToken
-     *
-     * @return array
      */
     abstract public function settleOrder(string $paymentToken): array;
 
     /**
      * Revert order.
-     *
-     * @param string $paymentToken
-     *
-     * @return array
      */
     abstract public function revertOrder(string $paymentToken): array;
 
     /**
      * Get Payment Status.
-     *
-     * @param string $paymentToken
-     *
-     * @return array
      */
     abstract public function getPaymentStatusOrder(string $paymentToken): array;
 
     /**
      * Cancel order.
-     *
-     * @param string $paymentToken
-     *
-     * @return array
      */
     abstract public function cancelOrder(string $paymentToken): array;
 
     /**
      * Update order.
-     *
-     * @param Order $order
-     *
-     * @return array
      */
     abstract public function updateOrder(Order $order): array;
 
     /**
      * Checks response for any error.
-     *
-     * @param array|string $response
-     * @param array        $requestArgs
-     * @param string       $requestUrl
-     *
-     * @return array
      */
     protected function processResponse(array|string $response, array $requestArgs = [], string $requestUrl = ''): array
     {
@@ -179,7 +129,7 @@ abstract class SnappPay implements SnappPayInterface
             $responseCode = $response['status'];
             $responseBody = $response['data'] ?? null;
         } else {
-            if (isset($response['successful']) && !$response['successful']) {
+            if (isset($response['successful']) && ! $response['successful']) {
                 $responseCode = $this->getResponseCode($response['errorData']['errorCode']);
                 $responseBody = $response['errorData']['message'];
             } else {
@@ -192,48 +142,41 @@ abstract class SnappPay implements SnappPayInterface
         // Check the status code, if it's not between 200 and 299 then it's an error.
         // for "RBA: Access Denied" strings raises array error in json_decode. for this king of errors,
         // it's better to return arrya of error message.
-        if (!$is_json) {
+        if (! $is_json) {
             return [
                 'status' => 'error',
                 'successful' => false,
                 'statusCode' => $responseCode,
                 'message' => $responseBody,
                 'url' => $requestUrl,
-                'args' => $requestArgs
+                'args' => $requestArgs,
             ];
         }
+
         return json_decode($responseBody, true);
 
     }
 
     /**
      * Custom remote request wrapper.
-     *
-     * @param string      $endpoint
-     * @param string      $method
-     * @param string      $token
-     * @param array       $args
-     * @param string|null $url
-     *
-     * @return array
      */
-    protected function request(string $endpoint, string $method = 'GET', string $token = 'Basic', array $args = [], string $url = null): array
+    protected function request(string $endpoint, string $method = 'GET', string $token = 'Basic', array $args = [], ?string $url = null): array
     {
-        if (!$url) {
-            $url = $this->getApiBaseUrl() . $endpoint;
+        if (! $url) {
+            $url = $this->getApiBaseUrl().$endpoint;
         }
 
         $headers = $token === 'Basic' ? $this->getRequestBasicToken() : $this->getRequestBearerToken();
 
         $request = ['method' => $method];
 
-        if ($method == 'GET' && !empty($args) && is_array($args)) {
-            $url = $url . '?' . http_build_query($args);
+        if ($method == 'GET' && ! empty($args) && is_array($args)) {
+            $url = $url.'?'.http_build_query($args);
         } else {
             $request['body'] = $token === 'Basic' ? http_build_query($args) : json_encode($args);
         }
 
-        $headers['user-agent'] = 'SnappPay, ' . $this->setting->getClientId();
+        $headers['user-agent'] = 'SnappPay, '.$this->setting->getClientId();
         $request['headers'] = $headers;
 
         $response = $this->curlExecute($url, $request);
@@ -246,28 +189,31 @@ abstract class SnappPay implements SnappPayInterface
                     $data = $decoded;
                 }
             }
+
             return $data;
         };
 
-// decode رشته‌های JSON
+        // decode رشته‌های JSON
         $body = $normalizeJson($response['body'] ?? $response ?? null);
 
-// تبدیل رشته‌ها داخل آرایه به UTF-8
+        // تبدیل رشته‌ها داخل آرایه به UTF-8
         $bodyUtf8 = function ($data) use (&$bodyUtf8) {
             if (is_array($data)) {
                 foreach ($data as $k => $v) {
                     $data[$k] = $bodyUtf8($v);
                 }
+
                 return $data;
             } elseif (is_string($data)) {
                 return mb_convert_encoding($data, 'UTF-8', 'auto');
             }
+
             return $data;
         };
 
         $body = $bodyUtf8($body);
 
-// لاگ نهایی
+        // لاگ نهایی
         file_put_contents(
             storage_path('logs/snappay_requests.log'),
             json_encode([
@@ -276,23 +222,16 @@ abstract class SnappPay implements SnappPayInterface
                 'method' => $method,
                 'request' => $args,
                 'response_status' => $response['http_code'] ?? $response['status'] ?? 'unknown',
-                'response_body' => $body
-            ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL . PHP_EOL,
+                'response_body' => $body,
+            ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT).PHP_EOL.PHP_EOL,
             FILE_APPEND
         );
-
 
         return $this->processResponse($response, $request, $url);
     }
 
-
     /**
      * Execute request by curl.
-     *
-     * @param string $url
-     * @param array  $request
-     *
-     * @return array|string
      */
     protected function curlExecute(string $url, array $request): array|string
     {
@@ -320,6 +259,7 @@ abstract class SnappPay implements SnappPayInterface
             $error_msg = curl_error($ch);
             // log error
             curl_close($ch);
+
             return ['curlError' => $error_msg];
         }
 
@@ -332,12 +272,6 @@ abstract class SnappPay implements SnappPayInterface
 
     /**
      * Set expired value in array.
-     *
-     * @param string $name
-     * @param string $value
-     * @param int    $ttl
-     *
-     * @return void
      */
     protected function setExpiredValue(string $name, string $value, int $ttl): void
     {
@@ -346,10 +280,6 @@ abstract class SnappPay implements SnappPayInterface
 
     /**
      * Gets expired value from array or false if expired data.
-     *
-     * @param string $name
-     *
-     * @return bool
      */
     protected function getExpiredValue(string $name): bool
     {
@@ -376,10 +306,6 @@ abstract class SnappPay implements SnappPayInterface
 
     /**
      * Check response error and return error code.
-     *
-     * @param int $errorCode
-     *
-     * @return int
      */
     protected function getResponseCode(int $errorCode): int
     {
@@ -394,13 +320,9 @@ abstract class SnappPay implements SnappPayInterface
 
     /**
      * Check response is json or not.
-     *
-     * @param array|string $string
-     *
-     * @return bool
      */
     protected function snappPayIsJson(array|string $string): bool
     {
-        return !is_array($string) && is_array(json_decode($string, true)) && (json_last_error() == JSON_ERROR_NONE);
+        return ! is_array($string) && is_array(json_decode($string, true)) && (json_last_error() == JSON_ERROR_NONE);
     }
 }

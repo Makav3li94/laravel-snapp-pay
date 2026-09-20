@@ -84,7 +84,7 @@ class CartItem
     /**
      * Get the cart item id.
      *
-     * @return int
+     * @return string
      */
     public function getId(): string
     {

@@ -194,7 +194,7 @@ abstract class Order implements OrderInterface
     /**
      * Retrieve order id.
      *
-     * @return int
+     * @return string
      */
     public function getId(): string
     {
