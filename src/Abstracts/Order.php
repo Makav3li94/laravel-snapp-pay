@@ -10,7 +10,7 @@ abstract class Order implements OrderInterface
     /**
      * Order Id.
      *
-     * @var int id
+     * @var string id
      */
     protected string $id;
 
@@ -196,7 +196,7 @@ abstract class Order implements OrderInterface
      *
      * @return int
      */
-    public function getId(): int
+    public function getId(): string
     {
         return $this->id;
     }
